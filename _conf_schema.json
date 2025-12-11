@@ -1,0 +1,62 @@
+{
+	"base_domain": {
+		"description": "接口域名（仅域名，含协议）",
+		"type": "text",
+		"hint": "例如：https://new.xigua.wiki",
+		"default": "https://new.xigua.wiki"
+	},
+	"authorization": {
+		"description": "Authorization 令牌",
+		"type": "text",
+		"hint": "请粘贴你的 API Authorization 值",
+		"default": ""
+	},
+	"new_api_user": {
+		"description": "New-Api-User",
+		"type": "text",
+		"hint": "填写你的 New-Api-User ID",
+		"default": ""
+	},
+	"request_timeout": {
+		"description": "请求超时（秒）",
+		"type": "int",
+		"hint": "HTTP 请求超时时间，单位秒",
+		"default": 15
+	},
+	"use_forward": {
+		"description": "使用合并转发发送报告",
+		"type": "bool",
+		"hint": "开启后tokens统计命令以合并转发展示",
+		"default": true
+	},
+	"log_use_forward": {
+		"description": "日志查询是否使用合并转发",
+		"type": "bool",
+		"hint": "仅影响查询日志logs命令的展示方式",
+		"default": true
+	},
+	"user_use_forward": {
+		"description": "查询额度 命令是否使用合并转发",
+		"type": "bool",
+		"hint": "开启后 查询额度 命令用合并转发发送用户信息",
+		"default": false
+	},
+	"show_top_models": {
+		"description": "是否显示调用最多的模型",
+		"type": "bool",
+		"hint": "关闭后将不显示按请求次数排序的TopN模型块",
+		"default": true
+	},
+	"top_n_models": {
+		"description": "显示调用最多的模型数量",
+		"type": "int",
+		"hint": "仅在开启显示时生效",
+		"default": 3
+	},
+	"log_page_size": {
+		"description": "日志查询条数",
+		"type": "int",
+		"hint": "默认 20 条",
+		"default": 20
+	}
+}

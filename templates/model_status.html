@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型状态报告</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700&family=Patrick+Hand&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-paper: #fdfbf7;
+            --ink-primary: #5d4037;
+            --ink-secondary: #8d6e63;
+
+            --color-yellow: #fff9c4;
+            --color-pink: #ffccbc;
+            --color-blue: #b3e5fc;
+            --color-green: #c8e6c9;
+            --color-purple: #e1bee7;
+
+            --accent-orange: #ff7043;
+            --accent-success: #66bb6a;
+            --accent-error: #ef5350;
+            --accent-blue: #42a5f5;
+
+            --font-title: 'ZCOOL KuaiLe', cursive;
+            --font-hand: 'Patrick Hand', "KaiTi", "STKaiti", serif;
+            --font-body: 'Noto Sans SC', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--ink-primary);
+            background-color: var(--bg-paper);
+            background-image: radial-gradient(#ddd 2px, transparent 2px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .icon {
+            width: 1em;
+            height: 1em;
+            fill: currentColor;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .icon-lg {
+            width: 1.5em;
+            height: 1.5em;
+        }
+
+        .icon-xl {
+            width: 2em;
+            height: 2em;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-top: 20px;
+        }
+
+        .title-sticker {
+            display: inline-block;
+            background: #fff;
+            padding: 15px 50px;
+            border: 3px dashed var(--ink-primary);
+            border-radius: 15px;
+            box-shadow: 5px 5px 0 var(--color-blue);
+            transform: rotate(-2deg);
+            position: relative;
+        }
+
+        .title-sticker h1 {
+            font-family: var(--font-title);
+            font-size: 2.2rem;
+            color: var(--accent-orange);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-sticker h1 .icon {
+            color: var(--accent-blue);
+        }
+
+        .tape {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 22px;
+            background: rgba(255, 171, 145, 0.7);
+            opacity: 0.8;
+        }
+
+        /* 时间范围卡片 */
+        .time-card {
+            background: var(--color-yellow);
+            border: 2px solid var(--ink-secondary);
+            border-radius: 10px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-family: var(--font-hand);
+            font-size: 1.1rem;
+            color: var(--ink-primary);
+            transform: rotate(-1deg);
+        }
+
+        .time-card .total-requests {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            color: var(--accent-orange);
+            margin-top: 8px;
+        }
+
+        /* 模型卡片 */
+        .model-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .model-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--ink-primary);
+        }
+
+        .card-tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 18px;
+            background: var(--color-blue);
+            opacity: 0.9;
+        }
+
+        .model-card:nth-child(2n) .card-tape {
+            background: var(--color-pink);
+            transform: translateX(-50%) rotate(2deg);
+        }
+
+        .model-card:nth-child(3n) .card-tape {
+            background: var(--color-green);
+            transform: translateX(-50%) rotate(-2deg);
+        }
+
+        .model-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #f0f0f0;
+        }
+
+        .model-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-purple);
+            border-radius: 50%;
+            color: #7b1fa2;
+        }
+
+        .model-icon .icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .model-info {
+            flex: 1;
+        }
+
+        .model-name {
+            font-family: var(--font-title);
+            font-size: 1.4rem;
+            color: var(--ink-primary);
+            background: linear-gradient(transparent 60%, var(--color-yellow) 60%);
+            display: inline;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .stamp {
+            background: #fff;
+            padding: 8px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
+            background-image: radial-gradient(transparent 50%, #fff 51%);
+            background-size: 8px 8px;
+            background-position: -4px -4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .stamp:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .stamp-inner {
+            border: 1px solid var(--ink-secondary);
+            width: 100%;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: radial-gradient(circle, #fff 50%, #fafafa 100%);
+            text-align: center;
+        }
+
+        .stamp-icon {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 5px;
+        }
+
+        .stamp-icon.success {
+            color: var(--accent-success);
+        }
+
+        .stamp-icon.error {
+            color: var(--accent-error);
+        }
+
+        .stamp-icon.info {
+            color: var(--accent-blue);
+        }
+
+        .stamp-icon.warning {
+            color: var(--accent-orange);
+        }
+
+        .stamp-num {
+            font-family: var(--font-title);
+            font-size: 1.4rem;
+            line-height: 1;
+            margin: 3px 0;
+        }
+
+        .stamp-num.success {
+            color: var(--accent-success);
+        }
+
+        .stamp-num.error {
+            color: var(--accent-error);
+        }
+
+        .stamp-num.normal {
+            color: var(--accent-orange);
+        }
+
+        .stamp-label {
+            font-family: var(--font-hand);
+            font-size: 0.9rem;
+            color: var(--ink-secondary);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .footer-note {
+            display: inline-block;
+            background: var(--color-yellow);
+            padding: 10px 25px;
+            font-family: var(--font-hand);
+            font-size: 1rem;
+            color: var(--ink-secondary);
+            transform: rotate(-1deg);
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--ink-secondary);
+        }
+
+        .footer-note .icon {
+            color: var(--accent-orange);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- SVG 图标定义 -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-chart" viewBox="0 0 24 24">
+            <path d="M3 3v18h18v-2H5V3H3zm4 12h2v4H7v-4zm4-6h2v10h-2V9zm4-4h2v14h-2V5zm4 8h2v6h-2v-6z"/>
+        </symbol>
+        
+        <symbol id="icon-robot" viewBox="0 0 24 24">
+            <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5z"/>
+        </symbol>
+        
+        <symbol id="icon-trending-up" viewBox="0 0 24 24">
+            <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/>
+        </symbol>
+        
+        <symbol id="icon-check-circle" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </symbol>
+        
+        <symbol id="icon-error-circle" viewBox="0 0 24 24">
+            <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+        </symbol>
+        
+        <symbol id="icon-timer" viewBox="0 0 24 24">
+            <path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0 0 12 4a9 9 0 0 0-9 9c0 4.97 4.02 9 9 9a8.994 8.994 0 0 0 7.03-14.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+        </symbol>
+        
+        <symbol id="icon-percent" viewBox="0 0 24 24">
+            <path d="M7.5 11C9.43 11 11 9.43 11 7.5S9.43 4 7.5 4 4 5.57 4 7.5 5.57 11 7.5 11zm0-5C8.33 6 9 6.67 9 7.5S8.33 9 7.5 9 6 8.33 6 7.5 6.67 6 7.5 6zm9 9c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5zm0 5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5.41 20L4 18.59 18.59 4 20 5.41 5.41 20z"/>
+        </symbol>
+        
+        <symbol id="icon-sparkle" viewBox="0 0 24 24">
+            <path d="M12 3L14.39 8.25L20 9.24L16 13.24L16.94 19L12 16.27L7.06 19L8 13.24L4 9.24L9.61 8.25L12 3z"/>
+        </symbol>
+
+        <symbol id="icon-empty" viewBox="0 0 24 24">
+            <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/>
+        </symbol>
+    </svg>
+
+    <div class="container">
+        <!-- 头部标题 -->
+        <div class="header">
+            <div class="title-sticker">
+                <div class="tape"></div>
+                <h1>
+                    <svg class="icon icon-xl"><use href="#icon-chart"/></svg>
+                    模型状态报告
+                </h1>
+            </div>
+        </div>
+
+        <!-- 时间范围卡片 -->
+        <div class="time-card">
+            📅 {{ time_range }}
+            <div class="total-requests">📊 总请求数: {{ total_requests }}</div>
+        </div>
+
+        <!-- 模型卡片列表 -->
+        {% for model in models %}
+        <div class="model-card">
+            <div class="card-tape"></div>
+            <div class="model-header">
+                <div class="model-icon">
+                    <svg class="icon"><use href="#icon-robot"/></svg>
+                </div>
+                <div class="model-info">
+                    <span class="model-name">{{ model.name }}</span>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stamp">
+                    <div class="stamp-inner">
+                        <svg class="stamp-icon info"><use href="#icon-trending-up"/></svg>
+                        <span class="stamp-num normal">{{ model.total }}</span>
+                        <span class="stamp-label">总请求</span>
+                    </div>
+                </div>
+                <div class="stamp">
+                    <div class="stamp-inner">
+                        <svg class="stamp-icon success"><use href="#icon-check-circle"/></svg>
+                        <span class="stamp-num success">{{ model.success }}</span>
+                        <span class="stamp-label">成功</span>
+                    </div>
+                </div>
+                <div class="stamp">
+                    <div class="stamp-inner">
+                        <svg class="stamp-icon error"><use href="#icon-error-circle"/></svg>
+                        <span class="stamp-num error">{{ model.failure }}</span>
+                        <span class="stamp-label">失败</span>
+                    </div>
+                </div>
+                <div class="stamp">
+                    <div class="stamp-inner">
+                        <svg class="stamp-icon warning"><use href="#icon-timer"/></svg>
+                        <span class="stamp-num normal">{{ model.avg_time }}s</span>
+                        <span class="stamp-label">平均用时</span>
+                    </div>
+                </div>
+                <div class="stamp">
+                    <div class="stamp-inner">
+                        <svg class="stamp-icon success"><use href="#icon-percent"/></svg>
+                        <span class="stamp-num {% if model.success_rate >= 90 %}success{% elif model.success_rate >= 70 %}normal{% else %}error{% endif %}">{{ model.success_rate }}%</span>
+                        <span class="stamp-label">成功率</span>
+                    </div>
+                </div>
+                <div class="stamp">
+                    <div class="stamp-inner">
+                        <svg class="stamp-icon info"><use href="#icon-empty"/></svg>
+                        <span class="stamp-num {% if model.empty_rate <= 5 %}success{% elif model.empty_rate <= 15 %}normal{% else %}error{% endif %}">{{ model.empty_rate }}%</span>
+                        <span class="stamp-label">空回率</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <div class="footer-note">
+                <svg class="icon"><use href="#icon-sparkle"/></svg>
+                Generated by AstrBot · NewAPI Plugin
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

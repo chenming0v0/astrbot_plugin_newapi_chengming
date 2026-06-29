@@ -194,7 +194,11 @@ class XiguaUsageReporter(Star):
             )
             with urlopen(req, timeout=self.request_timeout) as resp:
                 ret = _json.loads(resp.read().decode("utf-8"))
-                image_url = f"{endpoint}/text2img/data/{ret['data']['id']}"
+                # id 形如 "data/rendered_xxx.jpeg"，去掉 "data/" 前缀
+                file_id = ret['data']['id']
+                if file_id.startswith("data/"):
+                    file_id = file_id[len("data/"):]
+                image_url = f"{endpoint}/text2img/data/{file_id}"
 
             logger.info(f"自定义文转图成功: {image_url}")
             return image_url

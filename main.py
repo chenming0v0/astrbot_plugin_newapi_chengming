@@ -14,7 +14,7 @@ from astrbot.api.star import Context, Star, register
 
 
 @register(
-    "newapi",
+    "astrbot_plugin_newapi_chengming",
     "wanting0521",
     "从可配置的API 拉取用量数据，按固定时间跨度统计 RPM/TPM/TopN 模型，并在聊天中返回报告",
     "1.0.0",

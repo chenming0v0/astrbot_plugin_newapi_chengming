@@ -58,5 +58,11 @@
 		"type": "int",
 		"hint": "默认 20 条",
 		"default": 20
+	},
+	"t2i_endpoint": {
+		"description": "文转图服务地址",
+		"type": "text",
+		"hint": "例如：http://localhost:8999，留空使用 AstrBot 默认",
+		"default": ""
 	}
 }

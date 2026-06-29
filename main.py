@@ -91,7 +91,10 @@ class XiguaUsageReporter(Star):
 
         # 模板路径配置
         self._templates_dir: Path = self._plugin_dir / "templates"
-        
+
+        # 自定义文转图服务地址（可选）
+        self.t2i_endpoint: str = config.get("t2i_endpoint", "").strip()
+
         logger.info(
             f"已加载 [XiguaUsageReporter] v1.0.0，默认统计 {self.time_span_minutes_default} 分钟，Top{self.top_n_models} 模型。"
         )
@@ -139,6 +142,11 @@ class XiguaUsageReporter(Star):
 
     async def _generate_image_report(self, html_content: str) -> Optional[str]:
         """使用AstrBot内置的HTML渲染服务生成图片"""
+
+        # 如果配置了自定义文转图地址，直接调用自定义服务
+        if self.t2i_endpoint:
+            return await self._generate_image_custom(html_content)
+
         try:
             # 图片生成选项
             image_options = {
@@ -160,6 +168,39 @@ class XiguaUsageReporter(Star):
             
         except Exception as e:
             logger.error(f"生成图片报告失败: {e}", exc_info=True)
+            return None
+
+    async def _generate_image_custom(self, html_content: str) -> Optional[str]:
+        """使用自定义文转图服务生成图片"""
+        try:
+            import json as _json
+            endpoint = self.t2i_endpoint.rstrip("/")
+            post_data = _json.dumps({
+                "html": html_content,
+                "json": True,
+                "options": {
+                    "full_page": True,
+                    "type": "jpeg",
+                    "quality": 95,
+                }
+            }).encode("utf-8")
+
+            from urllib.request import Request, urlopen
+            req = Request(
+                f"{endpoint}/text2img/generate",
+                data=post_data,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urlopen(req, timeout=self.request_timeout) as resp:
+                ret = _json.loads(resp.read().decode("utf-8"))
+                image_url = f"{endpoint}/text2img/data/{ret['data']['id']}"
+
+            logger.info(f"自定义文转图成功: {image_url}")
+            return image_url
+
+        except Exception as e:
+            logger.error(f"自定义文转图失败: {e}", exc_info=True)
             return None
 
     async def _http_get_json(self, url: str, headers: Dict[str, str]) -> Dict[str, Any]:
